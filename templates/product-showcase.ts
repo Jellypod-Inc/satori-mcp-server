@@ -122,7 +122,7 @@ export const productShowcaseTemplate = {
                         color: '#27ae60',
                         fontSize: '24px',
                       },
-                      children: '✓',
+                      children: '* ',
                     },
                   },
                   feature,

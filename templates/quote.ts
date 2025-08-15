@@ -82,7 +82,7 @@ export const quoteTemplate = {
               opacity: 0.8,
               textAlign: 'center',
             },
-            children: `${params.author ? `— ${params.author}` : ''}${params.source ? (params.author ? `, ${params.source}` : params.source) : ''}`,
+            children: `${params.author ? `- ${params.author}` : ''}${params.source ? (params.author ? `, ${params.source}` : params.source) : ''}`,
           },
         } : null,
       ].filter(Boolean),

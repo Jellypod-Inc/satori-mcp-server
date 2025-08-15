@@ -149,17 +149,27 @@ export async function loadFonts(
   fonts?: FontConfig[],
   googleFonts?: GoogleFontConfig[]
 ): Promise<FontData[]> {
+  // Always load default font first as fallback
+  const defaultFonts = await loadDefaultFont();
+  
   // Prefer Google Fonts if specified
   if (googleFonts && googleFonts.length > 0) {
-    return await loadGoogleFonts(googleFonts);
+    try {
+      const googleFontData = await loadGoogleFonts(googleFonts);
+      // Return Google fonts with default as fallback
+      return [...googleFontData, ...defaultFonts];
+    } catch (error) {
+      console.error('Failed to load Google fonts, using default:', error);
+      return defaultFonts;
+    }
   }
 
   // Use local fonts if specified
   if (fonts && fonts.length > 0) {
     const fontConfigs = await loadLocalFonts(fonts);
-    return fontConfigs.length > 0 ? fontConfigs : await loadDefaultFont();
+    return fontConfigs.length > 0 ? [...fontConfigs, ...defaultFonts] : defaultFonts;
   }
 
   // Fall back to default font
-  return await loadDefaultFont();
+  return defaultFonts;
 }

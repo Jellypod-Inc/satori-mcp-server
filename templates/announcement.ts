@@ -60,17 +60,23 @@ export const announcementTemplate = {
               children: params.date,
             },
           } : null,
-          // Icon based on type
+          // Type indicator badge
           {
             type: 'div',
             props: {
               style: {
-                fontSize: '72px',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                letterSpacing: '2px',
                 marginBottom: '30px',
+                padding: '8px 24px',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '20px',
+                textTransform: 'uppercase',
               },
-              children: params.type === 'success' ? '✨' : 
-                        params.type === 'warning' ? '⚠️' : 
-                        params.type === 'error' ? '🚨' : 'ℹ️',
+              children: params.type === 'success' ? 'SUCCESS' : 
+                        params.type === 'warning' ? 'WARNING' : 
+                        params.type === 'error' ? 'ALERT' : 'INFO',
             },
           },
           // Headline

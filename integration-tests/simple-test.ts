@@ -179,7 +179,7 @@ async function runTests() {
           params: {
             title: 'Test Card',
             subtitle: 'This is a test',
-            logo: '🚀',
+            logo: 'LOGO',
           },
           outputPath,
         },
