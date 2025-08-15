@@ -1,0 +1,33 @@
+{
+  "name": "satori-mcp-server",
+  "version": "0.2.0",
+  "description": "MCP server for generating images with Satori",
+  "main": "dist/server.js",
+  "type": "module",
+  "bin": {
+    "satori-mcp-server": "./dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/server.ts",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.3",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "satori": "^0.10.13",
+    "zod": "^4.0.17"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}
