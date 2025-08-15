@@ -11,7 +11,7 @@
     "build": "tsc",
     "dev": "tsx src/server.ts",
     "start": "node dist/src/server.js",
-    "test": "tsx test.ts"
+    "test": "tsx integration-tests/simple-test.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",
