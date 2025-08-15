@@ -15,6 +15,7 @@ import fs from "fs/promises";
 // Import helpers
 import { loadFonts, type FontConfig, type GoogleFontConfig } from "./helpers/fonts.js";
 import { parseHtmlToJsx } from "./helpers/jsx-parser.js";
+import { listTemplates, getTemplate } from "../templates/index.js";
 
 // Schema definitions
 const GenerateImageArgsSchema = z.object({
@@ -44,6 +45,24 @@ const GenerateImageArgsSchema = z.object({
     .optional()
     .describe("Array of Google Fonts to load"),
   style: z.record(z.string(), z.any()).optional().describe("Root container style object"),
+});
+
+const GenerateFromTemplateArgsSchema = z.object({
+  template: z.string().describe("Name of the template to use"),
+  params: z.record(z.string(), z.any()).describe("Parameters for the template"),
+  outputPath: z.string().describe("Path where the image should be saved"),
+  width: z.number().optional().describe("Width override (uses template default if not specified)"),
+  height: z.number().optional().describe("Height override (uses template default if not specified)"),
+  googleFonts: z
+    .array(
+      z.object({
+        name: z.string(),
+        weight: z.number().default(400),
+        style: z.enum(["normal", "italic"]).default("normal"),
+      })
+    )
+    .optional()
+    .describe("Array of Google Fonts to load"),
 });
 
 
@@ -106,6 +125,42 @@ function getServer(): Server {
           required: ["html", "outputPath"],
         },
       },
+      {
+        name: "list_templates",
+        description: "List all available image generation templates",
+        inputSchema: {
+          type: "object",
+          properties: {},
+        },
+      },
+      {
+        name: "generate_image_from_template",
+        description: "Generate an image using a predefined template",
+        inputSchema: {
+          type: "object",
+          properties: {
+            template: { type: "string", description: "Name of the template to use" },
+            params: { type: "object", description: "Parameters for the template" },
+            outputPath: { type: "string", description: "Path where the image should be saved" },
+            width: { type: "number", description: "Width override (uses template default if not specified)" },
+            height: { type: "number", description: "Height override (uses template default if not specified)" },
+            googleFonts: {
+              type: "array",
+              description: "Array of Google Fonts to load",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  weight: { type: "number", default: 400 },
+                  style: { type: "string", enum: ["normal", "italic"], default: "normal" },
+                },
+                required: ["name"],
+              },
+            },
+          },
+          required: ["template", "params", "outputPath"],
+        },
+      },
     ],
   }));
 
@@ -114,6 +169,112 @@ function getServer(): Server {
     const { name, arguments: args } = request.params;
 
     switch (name) {
+      case "list_templates": {
+        try {
+          const templates = listTemplates();
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({ templates }, null, 2),
+              },
+            ],
+          };
+        } catch (error) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error listing templates: ${(error as Error).message}`,
+              },
+            ],
+            isError: true,
+          };
+        }
+      }
+
+      case "generate_image_from_template": {
+        try {
+          const validated = GenerateFromTemplateArgsSchema.parse(args);
+          const { template: templateName, params, outputPath, width, height, googleFonts } = validated;
+          
+          // Get the template
+          const template = getTemplate(templateName);
+          if (!template) {
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `Template "${templateName}" not found. Use list_templates to see available templates.`,
+                },
+              ],
+              isError: true,
+            };
+          }
+          
+          // Generate JSX from template
+          const jsxElement = template.generate(params);
+          
+          // Use template defaults or overrides for dimensions
+          const imageWidth = width || template.defaultSize.width;
+          const imageHeight = height || template.defaultSize.height;
+          
+          // Load fonts - use template fonts if not overridden
+          const fontsToLoad = googleFonts || template.googleFonts;
+          const fonts = await loadFonts(undefined, fontsToLoad as GoogleFontConfig[]);
+          
+          // Generate SVG with Satori
+          const svg = await satori(jsxElement, {
+            width: imageWidth,
+            height: imageHeight,
+            fonts,
+          });
+          
+          // Convert to PNG
+          const resvg = new Resvg(svg, {
+            fitTo: {
+              mode: "width",
+              value: imageWidth,
+            },
+          });
+          const pngData = resvg.render();
+          const pngBuffer = pngData.asPng();
+          
+          // Save the image
+          await fs.writeFile(outputPath, pngBuffer);
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Image generated from template "${templateName}" and saved to: ${outputPath}`,
+              },
+            ],
+          };
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `Invalid arguments: ${error.issues.map((e: any) => `${e.path.join(".")}: ${e.message}`).join(", ")}`,
+                },
+              ],
+              isError: true,
+            };
+          }
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error generating image from template: ${(error as Error).message}`,
+              },
+            ],
+            isError: true,
+          };
+        }
+      }
+
       case "generate_image": {
         try {
           const validated = GenerateImageArgsSchema.parse(args);
