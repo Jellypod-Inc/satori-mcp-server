@@ -1,5 +1,5 @@
 import React from "react";
-import { Template } from "./index";
+import type { Template } from "./index";
 
 export const socialCardTemplate: Template = {
   name: "social-card",

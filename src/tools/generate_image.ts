@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { type ToolMetadata, type InferSchema } from "xmcp";
+import type { ToolMetadata, InferSchema } from "xmcp";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
-import fs from "fs/promises";
-import { loadGoogleFont, loadLocalFonts, type FontConfig } from "./helpers/fonts";
+import fs from "node:fs/promises";
+import { loadGoogleFont } from "./helpers/fonts";
 import { parseJsxString } from "./helpers/jsx-parser";
 
 export const schema = {
@@ -38,28 +38,29 @@ export const metadata: ToolMetadata = {
 export default async function generateImage(params: InferSchema<typeof schema>) {
   const { jsx, width, height, outputPath, googleFonts } = params;
 
-  // Always load all local fonts from the fonts directory
-  const localFonts = await loadLocalFonts();
+  // Load Google Fonts (default to Inter if none specified)
+  const fonts = [];
+  const fontsToLoad = googleFonts && googleFonts.length > 0 ? googleFonts : [
+    { name: "Inter", weight: 400, style: "normal" as const },
+    { name: "Inter", weight: 700, style: "normal" as const }
+  ];
 
-  // Optionally add Google Fonts
-  if (googleFonts) {
-    for (const font of googleFonts) {
-      const data = await loadGoogleFont(font.name, font.weight, font.style);
-      
-      // Ensure weight is a valid Weight type (100-900 in increments of 100)
-      type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
-      const standardWeights: Weight[] = [100, 200, 300, 400, 500, 600, 700, 800, 900];
-      const weight = standardWeights.reduce((prev, curr) => 
-        Math.abs(curr - font.weight) < Math.abs(prev - font.weight) ? curr : prev
-      ) as Weight;
-      
-      localFonts.push({
-        name: font.name,
-        data,
-        weight,
-        style: font.style,
-      });
-    }
+  for (const font of fontsToLoad) {
+    const data = await loadGoogleFont(font.name, font.weight, font.style);
+
+    // Ensure weight is a valid Weight type (100-900 in increments of 100)
+    type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+    const standardWeights: Weight[] = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+    const weight = standardWeights.reduce((prev, curr) =>
+      Math.abs(curr - font.weight) < Math.abs(prev - font.weight) ? curr : prev
+    ) as Weight;
+
+    fonts.push({
+      name: font.name,
+      data,
+      weight,
+      style: font.style,
+    });
   }
 
   const jsxElement = parseJsxString(jsx);
@@ -67,7 +68,7 @@ export default async function generateImage(params: InferSchema<typeof schema>) 
   const svg = await satori(jsxElement, {
     width,
     height,
-    fonts: localFonts,
+    fonts,
   });
 
   const resvg = new Resvg(svg, {

@@ -8,18 +8,7 @@ const config: XmcpConfig = {
     if (typeof config.externals === 'object' && !Array.isArray(config.externals)) {
       config.externals['@resvg/resvg-js'] = 'commonjs @resvg/resvg-js';
       config.externals['@resvg/resvg-js-darwin-arm64'] = 'commonjs @resvg/resvg-js-darwin-arm64';
-      config.externals['fontkit'] = 'commonjs fontkit';
     }
-    
-    // Add rule to handle font files
-    config.module = config.module || { rules: [] };
-    config.module.rules = config.module.rules || [];
-    
-    // Add loader for font files (Note: WOFF2 not supported by Satori)
-    config.module.rules.push({
-      test: /\.(ttf|otf|woff)$/,
-      type: 'asset/inline', // This will inline the font as base64
-    });
     
     return config;
   },

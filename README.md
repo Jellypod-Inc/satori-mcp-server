@@ -1,108 +1,241 @@
-# satori-mcp-server
-An MCP server that uses Satori to generate images from React components.
+# Satori MCP Server
 
-This project was created with [create-xmcp-app](https://github.com/basementstudio/xmcp).
+An MCP (Model Context Protocol) server that generates beautiful images from React components using [Satori](https://github.com/vercel/satori). Create social cards, blog headers, quotes, and custom images directly through AI assistants like Claude.
 
-## Getting Started
+## Features
 
-First, run the development server:
+- 🎨 **Generate images from JSX** - Convert React components to PNG images
+- 📝 **Built-in templates** - Social cards, blog headers, and quote designs
+- 🔤 **Google Fonts support** - Access to hundreds of fonts
+- 🚀 **MCP Protocol** - Works seamlessly with Claude Desktop and other MCP clients
+- 🛠️ **TypeScript** - Fully typed for better developer experience
+
+## Installation
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm (recommended) or npm
+
+### Clone and Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+git clone https://github.com/Jellypod-Inc/satori-mcp-server.git
+cd satori-mcp-server
+pnpm install
 ```
 
-This will start the MCP server with the selected transport method.
+### Configure with Claude Desktop
 
-## Project Structure
+Add the server to your Claude Desktop configuration:
 
-This project uses the structured approach where tools are automatically discovered from the `src/tools` directory. Each tool is defined in its own file with the following structure:
+**MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
-```typescript
-import { z } from "zod";
-import { type InferSchema } from "xmcp";
-
-// Define the schema for tool parameters
-export const schema = {
-  a: z.number().describe("First number to add"),
-  b: z.number().describe("Second number to add"),
-};
-
-// Define tool metadata
-export const metadata = {
-  name: "add",
-  description: "Add two numbers together",
-  annotations: {
-    title: "Add Two Numbers",
-    readOnlyHint: true,
-    destructiveHint: false,
-    idempotentHint: true,
-  },
-};
-
-// Tool implementation
-export default async function add({ a, b }: InferSchema<typeof schema>) {
-  return {
-    content: [{ type: "text", text: String(a + b) }],
-  };
+```json
+{
+  "mcpServers": {
+    "satori": {
+      "command": "node",
+      "args": ["/path/to/satori-mcp-server/dist/http.js"]
+    }
+  }
 }
 ```
 
-## Adding New Tools
-
-To add a new tool:
-
-1. Create a new `.ts` file in the `src/tools` directory
-2. Export a `schema` object defining the tool parameters using Zod
-3. Export a `metadata` object with tool information
-4. Export a default function that implements the tool logic
-
-## Building for Production
-
-To build your project for production:
+## Development
 
 ```bash
-npm run build
-# or
-yarn build
-# or
+# Start development server with hot reload
+pnpm dev
+
+# Run tests
+pnpm test
+
+# Run specific template tests
+pnpm test:social-card
+pnpm test:blog-header
+pnpm test:quote
+
+# Build for production
 pnpm build
+
+# Start production server
+pnpm start
 ```
 
-This will compile your TypeScript code and output it to the `dist` directory.
+## Available Tools
 
-## Running the Server
+### 1. `generate_image`
+Generate an image from custom JSX content.
 
-You can run the server for the transport built with:
+**Parameters:**
+- `jsx` (string, required): JSX content as a string
+- `width` (number, default: 600): Image width in pixels
+- `height` (number, default: 400): Image height in pixels
+- `outputPath` (string, required): Where to save the image
+- `googleFonts` (array, optional): Google Fonts to load
 
-- HTTP: `node dist/http.js`
-- STDIO: `node dist/stdio.js`
+**Example:**
+```javascript
+{
+  jsx: '<div style={{background: "linear-gradient(to right, #667eea, #764ba2)", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}><h1 style={{color: "white", fontSize: "60px"}}>Hello World</h1></div>',
+  width: 1200,
+  height: 630,
+  outputPath: "output/hello.png",
+  googleFonts: [
+    { name: "Inter", weight: 700, style: "normal" }
+  ]
+}
+```
 
-Given the selected transport method, you will have a custom start script added to the `package.json` file.
+### 2. `generate_from_template`
+Generate an image using a pre-built template.
 
-For HTTP:
+**Parameters:**
+- `template` (string, required): Template name ("social-card", "blog-header", "quote")
+- `params` (object, required): Template-specific parameters
+- `outputPath` (string, required): Where to save the image
+- `width` (number, optional): Override template width
+- `height` (number, optional): Override template height
+
+**Example:**
+```javascript
+{
+  template: "social-card",
+  params: {
+    title: "Announcing Satori MCP Server",
+    description: "Generate beautiful images with AI",
+    backgroundColor: "#2563eb"
+  },
+  outputPath: "output/announcement.png"
+}
+```
+
+### 3. `list_templates`
+List all available templates with their descriptions.
+
+**No parameters required**
+
+Returns a list of templates with their names and descriptions.
+
+## Templates
+
+### Social Card (1200x630)
+Perfect for social media sharing cards.
+
+**Parameters:**
+- `title` (string, required): Main heading
+- `description` (string, optional): Supporting text
+- `backgroundColor` (string, optional): Background color (default: #1a1a1a)
+
+### Blog Header (1200x480)
+Ideal for blog post headers.
+
+**Parameters:**
+- `title` (string, required): Blog post title
+- `author` (string, required): Author name
+- `date` (string, required): Publication date
+- `category` (string, optional): Post category
+
+### Quote (1080x1080)
+Square format for inspirational quotes.
+
+**Parameters:**
+- `quote` (string, required): The quote text
+- `author` (string, optional): Quote author
+- `backgroundColor` (string, optional): Background color
+
+## Creating Custom Templates
+
+Add new templates in `src/templates/`:
+
+```typescript
+import React from "react";
+import type { Template } from "./index";
+
+export const myTemplate: Template = {
+  name: "my-template",
+  description: "My custom template",
+  defaultSize: { width: 1200, height: 630 },
+  googleFonts: [
+    { name: "Inter", weight: 700, style: "normal" }
+  ],
+  generate: (params: { title: string }) => {
+    return (
+      <div style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#000",
+        color: "#fff",
+        fontFamily: "Inter"
+      }}>
+        <h1>{params.title}</h1>
+      </div>
+    );
+  },
+};
+```
+
+Then register it in `src/templates/index.ts`:
+
+```typescript
+import { myTemplate } from "./my-template";
+
+export const templates: Record<string, Template> = {
+  // ... existing templates
+  "my-template": myTemplate,
+};
+```
+
+## Testing
+
+The project includes comprehensive tests for all tools and templates:
 
 ```bash
-npm run start-http
-# or
-yarn start-http
-# or
-pnpm start-http
+# Run all tests
+pnpm test
+
+# Test outputs are saved in tests/output/
+# Images are generated to verify actual functionality
 ```
 
-For STDIO:
+Test structure:
+- Each template has multiple test cases (basic, edge cases, custom styling)
+- Tools are tested for proper MCP response format
+- Actual PNG images are generated to verify output
 
-```bash
-npm run start-stdio
-# or
-yarn start-stdio
-# or
-pnpm start-stdio
-```
+## Architecture
 
-## Learn More
+Built with:
+- [xmcp](https://xmcp.dev) - TypeScript framework for MCP servers
+- [Satori](https://github.com/vercel/satori) - Convert HTML/CSS to SVG
+- [@resvg/resvg-js](https://github.com/yisibl/resvg-js) - Convert SVG to PNG
+- Google Fonts API - Dynamic font loading
 
-- [xmcp Documentation](https://xmcp.dev/docs)
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+Mozilla Public License Version 2.0 - see [LICENSE](LICENSE) file for details
+
+## Acknowledgments
+
+- [Vercel](https://vercel.com) for creating Satori
+- [Anthropic](https://anthropic.com) for the MCP protocol
+- [Basement Studio](https://basement.studio) for the xmcp framework
+
+## Support
+
+For issues and questions, please use the [GitHub Issues](https://github.com/Jellypod-Inc/satori-mcp-server/issues) page.

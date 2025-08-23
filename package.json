@@ -6,27 +6,34 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "prebuild": "node scripts/generate-font-imports.js",
     "build": "xmcp build",
-    "predev": "node scripts/generate-font-imports.js",
     "dev": "xmcp dev",
     "start": "node dist/http.js",
-    "generate-fonts": "node scripts/generate-font-imports.js"
+    "test": "node -r tsx/cjs tests/run-all.js",
+    "test:simple": "node -r tsx/cjs tests/simple-test.js",
+    "test:social-card": "node -r tsx/cjs tests/templates/social-card.test.js",
+    "test:blog-header": "node -r tsx/cjs tests/templates/blog-header.test.js",
+    "test:quote": "node -r tsx/cjs tests/templates/quote.test.js"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "@resvg/resvg-js-darwin-arm64": "^2.6.2",
     "@types/react": "^19.1.11",
-    "fontkit": "^2.0.4",
     "react": "^19.1.1",
     "satori": "^0.16.2",
     "xmcp": "0.1.13",
     "zod": "3.24.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.0",
     "@types/node": "^24.3.0",
+    "@types/node-fetch": "^2.6.13",
+    "axios": "^1.11.0",
+    "node-fetch": "^2.7.0",
     "node-loader": "^2.1.0",
-    "swc-loader": "^0.2.6"
+    "swc-loader": "^0.2.6",
+    "tsx": "^4.20.4",
+    "ultracite": "5.2.4"
   },
   "packageManager": "pnpm@10.12.3+sha512.467df2c586056165580ad6dfb54ceaad94c5a30f80893ebdec5a44c5aa73c205ae4a5bb9d5ed6bb84ea7c249ece786642bbb49d06a307df218d03da41c317417"
 }

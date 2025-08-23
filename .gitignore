@@ -4,3 +4,18 @@ node_modules/
 dist
 .xmcp
 xmcp-env.d.ts
+
+# Test outputs
+tests/output/
+test-output/
+coverage/
+*.png
+!src/fonts/**/*.ttf
+
+# Generated files  
+src/fonts/font-data.ts
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
