@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2018",
     "module": "commonjs",
+    "jsx": "react",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -11,6 +12,7 @@
   },
   "include": [
     "xmcp-env.d.ts",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ]
 }

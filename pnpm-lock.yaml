@@ -48,6 +48,9 @@ importers:
       swc-loader:
         specifier: ^0.2.6
         version: 0.2.6(@swc/core@1.13.4(@swc/helpers@0.5.17))(webpack@5.101.3(@swc/core@1.13.4(@swc/helpers@0.5.17)))
+      ts-loader:
+        specifier: ^9.5.2
+        version: 9.5.2(typescript@5.9.2)(webpack@5.101.3(@swc/core@1.13.4(@swc/helpers@0.5.17)))
       tsx:
         specifier: ^4.20.4
         version: 4.20.4
@@ -2758,6 +2761,10 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
 
+  source-map@0.7.6:
+    resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
+    engines: {node: '>= 12'}
+
   spawn-rx@5.1.2:
     resolution: {integrity: sha512-/y7tJKALVZ1lPzeZZB9jYnmtrL7d0N2zkorii5a7r7dhHkWIuLTzZpZzMJLK1dmYRgX/NCc4iarTO3F7BS2c/A==}
 
@@ -2915,6 +2922,13 @@ packages:
         optional: true
       omelette:
         optional: true
+
+  ts-loader@9.5.2:
+    resolution: {integrity: sha512-Qo4piXvOTWcMGIgRiuFa6nHNm+54HbYaZCKqc9eeZCLRy3XqafQgwX2F7mofrbJG3g7EEb+lkiR+z2Lic2s3Zw==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      typescript: '*'
+      webpack: ^5.0.0
 
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -5900,6 +5914,8 @@ snapshots:
 
   source-map@0.6.1: {}
 
+  source-map@0.7.6: {}
+
   spawn-rx@5.1.2:
     dependencies:
       debug: 4.4.1
@@ -6028,6 +6044,16 @@ snapshots:
       zod-to-json-schema: 3.24.6(zod@3.25.76)
     transitivePeerDependencies:
       - typescript
+
+  ts-loader@9.5.2(typescript@5.9.2)(webpack@5.101.3(@swc/core@1.13.4(@swc/helpers@0.5.17))):
+    dependencies:
+      chalk: 4.1.2
+      enhanced-resolve: 5.18.3
+      micromatch: 4.0.8
+      semver: 7.7.2
+      source-map: 0.7.6
+      typescript: 5.9.2
+      webpack: 5.101.3(@swc/core@1.13.4(@swc/helpers@0.5.17))
 
   ts-node@10.9.2(@swc/core@1.13.4(@swc/helpers@0.5.17))(@types/node@24.3.0)(typescript@5.9.2):
     dependencies:
