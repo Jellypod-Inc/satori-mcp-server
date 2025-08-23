@@ -6,25 +6,25 @@ import generateFromTemplate from '../src/tools/generate_from_template';
 async function runTemplateTests(template?: string): Promise<boolean> {
   const outputDir = path.join(__dirname, 'output/templates');
   await fs.mkdir(outputDir, { recursive: true });
-  
-  const templatesToTest = template 
+
+  const templatesToTest = template
     ? { [template]: testConfig.templates[template] }
     : testConfig.templates;
-  
+
   if (template && !testConfig.templates[template]) {
     console.error(`Template "${template}" not found in test config`);
     return false;
   }
-  
+
   let allPassed = true;
-  
+
   for (const [templateName, testCases] of Object.entries(templatesToTest)) {
     console.log(`\nTesting ${templateName} template...`);
-    
+
     const results = await Promise.all(
       testCases.map(async (testCase) => {
-        const outputPath = path.join(outputDir, `${templateName}-${testCase.name}.png`);
-        
+        const outputPath = path.join(outputDir, `${templateName}-${testCase.name}.webp`);
+
         try {
           await generateFromTemplate({
             template: templateName,
@@ -34,7 +34,7 @@ async function runTemplateTests(template?: string): Promise<boolean> {
             height: undefined,
             googleFonts: undefined,
           });
-          
+
           console.log(`  ✓ ${templateName} (${testCase.name}): ${outputPath}`);
           return { success: true, testCase: testCase.name };
         } catch (error) {
@@ -43,19 +43,19 @@ async function runTemplateTests(template?: string): Promise<boolean> {
         }
       })
     );
-    
+
     if (results.some(r => !r.success)) {
       allPassed = false;
     }
   }
-  
+
   return allPassed;
 }
 
 // Main execution
 if (require.main === module) {
   const template = process.argv[2];
-  
+
   runTemplateTests(template)
     .then(allPassed => {
       if (allPassed) {
