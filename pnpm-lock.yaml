@@ -11,9 +11,6 @@ importers:
       '@resvg/resvg-js':
         specifier: ^2.6.2
         version: 2.6.2
-      '@resvg/resvg-js-darwin-arm64':
-        specifier: ^2.6.2
-        version: 2.6.2
       '@types/react':
         specifier: ^19.1.11
         version: 19.1.11
@@ -57,6 +54,16 @@ importers:
       ultracite:
         specifier: 5.2.4
         version: 5.2.4(@types/node@24.3.0)(terser@5.43.1)(tsx@4.20.4)(typescript@5.9.2)
+    optionalDependencies:
+      '@resvg/resvg-js-darwin-x64':
+        specifier: 2.6.2
+        version: 2.6.2
+      '@resvg/resvg-js-linux-x64-gnu':
+        specifier: 2.6.2
+        version: 2.6.2
+      '@resvg/resvg-js-linux-x64-musl':
+        specifier: 2.6.2
+        version: 2.6.2
 
 packages:
 
@@ -3929,7 +3936,8 @@ snapshots:
   '@resvg/resvg-js-android-arm64@2.6.2':
     optional: true
 
-  '@resvg/resvg-js-darwin-arm64@2.6.2': {}
+  '@resvg/resvg-js-darwin-arm64@2.6.2':
+    optional: true
 
   '@resvg/resvg-js-darwin-x64@2.6.2':
     optional: true

@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "dist/http.js": {
+      "maxDuration": 30
+    }
+  },
+  "buildCommand": "pnpm build",
+  "outputDirectory": "dist",
+  "installCommand": "pnpm install --no-optional"
+}
