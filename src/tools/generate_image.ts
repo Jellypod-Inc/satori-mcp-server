@@ -3,8 +3,8 @@ import type { ToolMetadata, InferSchema } from "xmcp";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import fs from "node:fs/promises";
-import { loadGoogleFont } from "./helpers/fonts";
-import { parseJsxString } from "./helpers/jsx-parser";
+import { loadGoogleFont } from "../helpers/fonts";
+import { parseJsxString } from "../helpers/jsx-parser";
 
 export const schema = {
   jsx: z.string().describe("JSX content as a string (e.g., '<div>Hello</div>')"),
