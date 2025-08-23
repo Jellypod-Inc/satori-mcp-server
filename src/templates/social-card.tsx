@@ -1,7 +1,16 @@
 import React from "react";
+import { z } from "zod";
 import type { Template } from "./index";
 
-export const socialCardTemplate: Template = {
+const socialCardSchema = z.object({
+  title: z.string().describe("Main title text for the social card"),
+  description: z.string().optional().describe("Optional description text"),
+  backgroundColor: z.string().default("#1a1a1a").describe("Background color (CSS color value)"),
+});
+
+type SocialCardParams = z.infer<typeof socialCardSchema>;
+
+export const socialCardTemplate: Template<typeof socialCardSchema> = {
   name: "social-card",
   description: "Social media card with title and description",
   defaultSize: { width: 1200, height: 630 },
@@ -9,7 +18,8 @@ export const socialCardTemplate: Template = {
     { name: "Inter", weight: 700, style: "normal" },
     { name: "Inter", weight: 400, style: "normal" }
   ],
-  generate: (params: { title: string; description?: string; backgroundColor?: string }) => {
+  schema: socialCardSchema,
+  generate: (params: SocialCardParams) => {
     return (
       <div
         style={{

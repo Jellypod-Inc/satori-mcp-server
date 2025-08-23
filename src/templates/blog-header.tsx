@@ -1,7 +1,17 @@
 import React from "react";
+import { z } from "zod";
 import { Template } from "./index";
 
-export const blogHeaderTemplate: Template = {
+const blogHeaderSchema = z.object({
+  title: z.string().describe("Blog post title"),
+  author: z.string().optional().describe("Author name"),
+  date: z.string().optional().describe("Publication date"),
+  background: z.string().optional().describe("CSS gradient background"),
+});
+
+export type BlogHeaderTemplateParams = z.infer<typeof blogHeaderSchema>;
+
+export const blogHeaderTemplate: Template<typeof blogHeaderSchema> = {
   name: "blog-header",
   description: "Blog post header image",
   defaultSize: { width: 1920, height: 1080 },
@@ -9,8 +19,8 @@ export const blogHeaderTemplate: Template = {
     { name: "Roboto", weight: 900, style: "normal" },
     { name: "Roboto", weight: 400, style: "normal" }
   ],
-  generate: (params: { title: string; author?: string; date?: string; gradient?: string }) => {
-    const gradient = params.gradient || "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+  schema: blogHeaderSchema,
+  generate: (params: BlogHeaderTemplateParams) => {
     return (
       <div
         style={{
@@ -20,7 +30,7 @@ export const blogHeaderTemplate: Template = {
           alignItems: "center",
           width: "100%",
           height: "100%",
-          background: gradient,
+          background: params.background || "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           color: "#ffffff",
           fontFamily: "Roboto",
           padding: "80px",

@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { type ToolMetadata, type InferSchema } from "xmcp";
+import { type ToolMetadata } from "xmcp";
 import { listTemplates } from "../templates";
 
 export const schema = {};
@@ -17,7 +16,7 @@ export const metadata: ToolMetadata = {
 
 export default function listTemplatesCommand() {
   const templates = listTemplates();
-  
+
   return {
     content: [
       {

@@ -1,7 +1,16 @@
 import React from "react";
+import { z } from "zod";
 import { Template } from "./index";
 
-export const quoteTemplate: Template = {
+const quoteSchema = z.object({
+  quote: z.string().describe("The quote text"),
+  author: z.string().optional().describe("Quote author"),
+  backgroundColor: z.string().default("#f7f3f0").describe("Background color (CSS color value)"),
+});
+
+type QuoteParams = z.infer<typeof quoteSchema>;
+
+export const quoteTemplate: Template<typeof quoteSchema> = {
   name: "quote",
   description: "Inspirational quote image",
   defaultSize: { width: 1080, height: 1080 },
@@ -9,7 +18,8 @@ export const quoteTemplate: Template = {
     { name: "Playfair Display", weight: 700, style: "italic" },
     { name: "Open Sans", weight: 400, style: "normal" }
   ],
-  generate: (params: { quote: string; author?: string; backgroundColor?: string }) => {
+  schema: quoteSchema,
+  generate: (params: QuoteParams) => {
     return (
       <div
         style={{

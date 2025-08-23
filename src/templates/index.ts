@@ -1,18 +1,20 @@
 import React from "react";
+import { z } from "zod";
 
-export interface Template {
+export interface Template<T extends z.ZodType = z.ZodType> {
   name: string;
   description: string;
   defaultSize: { width: number; height: number };
   googleFonts?: Array<{ name: string; weight: number; style: string }>;
-  generate: (params: any) => React.ReactElement;
+  schema: T;
+  generate: (params: z.infer<T>) => React.ReactElement;
 }
 
 import { socialCardTemplate } from "./social-card";
 import { blogHeaderTemplate } from "./blog-header";
 import { quoteTemplate } from "./quote";
 
-export const templates: Record<string, Template> = {
+export const templates: Record<string, Template<any>> = {
   "social-card": socialCardTemplate,
   "blog-header": blogHeaderTemplate,
   "quote": quoteTemplate,

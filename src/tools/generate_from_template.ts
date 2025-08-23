@@ -65,7 +65,21 @@ export default async function generateFromTemplate(params: InferSchema<typeof sc
     };
   }
 
-  const jsxElement = template.generate(templateParams);
+  // Validate params with the template's Zod schema
+  const validationResult = template.schema.safeParse(templateParams);
+  if (!validationResult.success) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Invalid parameters for template "${templateName}": ${validationResult.error.format()._errors.join(", ")}`,
+        },
+      ],
+      isError: true,
+    };
+  }
+
+  const jsxElement = template.generate(validationResult.data);
 
   const imageWidth = width || template.defaultSize.width;
   const imageHeight = height || template.defaultSize.height;
