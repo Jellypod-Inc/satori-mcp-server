@@ -21,15 +21,15 @@ function zodSchemaToJSON(schema: z.ZodType): any {
   if (schema instanceof z.ZodObject) {
     const shape = schema.shape;
     const result: Record<string, any> = {};
-    
+
     for (const [key, value] of Object.entries(shape)) {
       const zodField = value as z.ZodType;
       result[key] = extractFieldInfo(zodField);
     }
-    
+
     return result;
   }
-  
+
   return {};
 }
 
@@ -37,7 +37,7 @@ function extractFieldInfo(field: z.ZodType): any {
   let baseField = field;
   let required = true;
   let defaultValue = undefined;
-  
+
   // Unwrap optional/default modifiers
   if (field instanceof z.ZodOptional) {
     required = false;
@@ -46,7 +46,7 @@ function extractFieldInfo(field: z.ZodType): any {
     defaultValue = field._def.defaultValue();
     baseField = field._def.innerType;
   }
-  
+
   // Get the base type
   let type = "unknown";
   if (baseField instanceof z.ZodString) {
@@ -56,28 +56,31 @@ function extractFieldInfo(field: z.ZodType): any {
   } else if (baseField instanceof z.ZodBoolean) {
     type = "boolean";
   }
-  
+
   // Get description if available
   const description = (field as any)._def?.description || "";
-  
+
   const result: any = {
     type,
     required,
     description,
   };
-  
+
   if (defaultValue !== undefined) {
     result.default = defaultValue;
   }
-  
+
   return result;
 }
 
+/**
+ * Get the schema and required parameters for a specific template
+ */
 export default async function getTemplate(params: InferSchema<typeof schema>) {
   const { template: templateName } = params;
-  
+
   const template = getTemplateFromRegistry(templateName);
-  
+
   if (!template) {
     const availableTemplates = Object.keys(templates);
     return {
@@ -92,17 +95,17 @@ export default async function getTemplate(params: InferSchema<typeof schema>) {
       ],
     };
   }
-  
+
   const parameters = zodSchemaToJSON(template.schema);
-  
+
   const templateDetails = {
     name: template.name,
     description: template.description,
-    defaultSize: template.defaultSize,
-    googleFonts: template.googleFonts || [],
+    size: template.size,
+    fonts: template.fonts,
     parameters,
   };
-  
+
   return {
     content: [
       {

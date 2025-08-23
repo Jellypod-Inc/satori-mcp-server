@@ -4,22 +4,11 @@ import satori from "satori";
 import { getTemplate, listTemplates } from "../templates";
 import { svgToImage } from "../helpers/svg-to-image";
 import { saveBlob } from "../helpers/save-blob";
+import { loadGoogleFont, FontData, loadFonts } from "../helpers/fonts";
 
 export const schema = {
   template: z.string().describe("Name of the template to use"),
   params: z.record(z.string(), z.any()).describe("Parameters for the template"),
-  width: z.number().optional().describe("Width override (uses template default if not specified)"),
-  height: z.number().optional().describe("Height override (uses template default if not specified)"),
-  googleFonts: z
-    .array(
-      z.object({
-        name: z.string(),
-        weight: z.number().default(400),
-        style: z.enum(["normal", "italic"]).default("normal"),
-      })
-    )
-    .optional()
-    .describe("Array of Google Fonts to load"),
 };
 
 export const metadata: ToolMetadata = {
@@ -33,23 +22,14 @@ export const metadata: ToolMetadata = {
   },
 };
 
-async function loadGoogleFont(name: string, weight: number = 400, style: string = "normal"): Promise<ArrayBuffer> {
-  const fontUrl = `https://fonts.googleapis.com/css2?family=${name.replace(/ /g, "+")}:ital,wght@${style === "italic" ? 1 : 0},${weight}&display=swap`;
-
-  const cssResponse = await fetch(fontUrl);
-  const css = await cssResponse.text();
-
-  const fontUrlMatch = css.match(/url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/);
-  if (!fontUrlMatch) {
-    throw new Error(`Could not find font URL for ${name}`);
-  }
-
-  const fontResponse = await fetch(fontUrlMatch[1]);
-  return fontResponse.arrayBuffer();
-}
-
+/**
+ * Generate an image using a predefined template.
+ *
+ * You must provide the name of the template to use and an object with the
+ * key/value pairs for the template parameters.
+ */
 export default async function generateImageFromTemplate(params: InferSchema<typeof schema>) {
-  const { template: templateName, params: templateParams, width, height, googleFonts } = params;
+  const { template: templateName, params: templateParams } = params;
 
   const template = getTemplate(templateName);
   if (!template) {
@@ -81,40 +61,21 @@ export default async function generateImageFromTemplate(params: InferSchema<type
 
   const jsxElement = template.generate(validationResult.data);
 
-  const imageWidth = width || template.defaultSize.width;
-  const imageHeight = height || template.defaultSize.height;
+  const fontData = await loadFonts(template.fonts);
 
-  const fontsToLoad = googleFonts || template.googleFonts || [];
-  const fontConfigs: any[] = [];
-
-  for (const font of fontsToLoad) {
-    const data = await loadGoogleFont(font.name, font.weight, font.style);
-    fontConfigs.push({
-      name: font.name,
-      data,
-      weight: font.weight,
-      style: font.style,
-    });
-  }
-
-  if (fontConfigs.length === 0) {
-    const defaultFontData = await loadGoogleFont("Inter", 400, "normal");
-    fontConfigs.push({
-      name: "Inter",
-      data: defaultFontData,
-      weight: 400,
-      style: "normal",
-    });
-  }
-
+  // Generate SVG image
+  const imageWidth = template.size.width;
+  const imageHeight = template.size.height;
   const svg = await satori(jsxElement, {
     width: imageWidth,
     height: imageHeight,
-    fonts: fontConfigs,
+    fonts: fontData,
   });
 
+  // Convert SVG to WebP
   const blob = await svgToImage(svg, imageWidth);
 
+  // Save image to Vercel Blob Storage
   const fileName = `${templateName}.webp`;
   const url = await saveBlob(blob, fileName);
 

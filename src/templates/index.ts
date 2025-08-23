@@ -1,11 +1,12 @@
 import React from "react";
 import { z } from "zod";
+import { Font } from "../helpers/fonts";
 
 export interface Template<T extends z.ZodType = z.ZodType> {
   name: string;
   description: string;
-  defaultSize: { width: number; height: number };
-  googleFonts?: Array<{ name: string; weight: number; style: string }>;
+  size: { width: number; height: number };
+  fonts: [Font, ...Font[]];
   schema: T;
   generate: (params: z.infer<T>) => React.ReactElement;
 }

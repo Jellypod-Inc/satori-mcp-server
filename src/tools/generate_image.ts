@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { ToolMetadata, InferSchema } from "xmcp";
-import satori from "satori";
-import { loadGoogleFont } from "../helpers/fonts";
+import satori, { Font, FontWeight } from "satori";
+import { loadFonts } from "../helpers/fonts";
 import { parseJsxString } from "../helpers/jsx-parser";
 import { svgToImage } from "../helpers/svg-to-image";
 import { saveBlob } from "../helpers/save-blob";
@@ -11,16 +11,17 @@ export const schema = {
   width: z.number().default(600).describe("Width of the output image in pixels"),
   height: z.number().default(400).describe("Height of the output image in pixels"),
   outputPath: z.string().describe("Path where the image should be saved"),
-  googleFonts: z
+  fonts: z
     .array(
       z.object({
-        name: z.string(),
-        weight: z.number().default(400),
+        name: z.string().default("Inter").describe("Name of the Google Font to load"),
+        weight: z.enum(["100", "200", "300", "400", "500", "600", "700", "800", "900"]).transform(Number).default("400").describe("Weight of the font"),
         style: z.enum(["normal", "italic"]).default("normal"),
       })
     )
     .optional()
-    .describe("Array of additional Google Fonts to load"),
+    .default([{ name: "Inter", weight: "400", style: "normal" }])
+    .describe("Array of Fonts to load from Google Fonts"),
 };
 
 export const metadata: ToolMetadata = {
@@ -36,39 +37,20 @@ export const metadata: ToolMetadata = {
 
 
 export default async function generateImage(params: InferSchema<typeof schema>) {
-  const { jsx, width, height, outputPath, googleFonts } = params;
+  const { jsx, width, height, fonts } = params;
 
-  // Load Google Fonts (default to Inter if none specified)
-  const fonts = [];
-  const fontsToLoad = googleFonts && googleFonts.length > 0 ? googleFonts : [
-    { name: "Inter", weight: 400, style: "normal" as const },
-    { name: "Inter", weight: 700, style: "normal" as const }
-  ];
-
-  for (const font of fontsToLoad) {
-    const data = await loadGoogleFont(font.name, font.weight, font.style);
-
-    // Ensure weight is a valid Weight type (100-900 in increments of 100)
-    type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
-    const standardWeights: Weight[] = [100, 200, 300, 400, 500, 600, 700, 800, 900];
-    const weight = standardWeights.reduce((prev, curr) =>
-      Math.abs(curr - font.weight) < Math.abs(prev - font.weight) ? curr : prev
-    ) as Weight;
-
-    fonts.push({
-      name: font.name,
-      data,
-      weight,
-      style: font.style,
-    });
-  }
+  const fontData = await loadFonts(fonts.map(f => ({
+    name: f.name,
+    weight: f.weight as FontWeight,
+    style: f.style,
+  })));
 
   const jsxElement = parseJsxString(jsx);
 
   const svg = await satori(jsxElement, {
     width,
     height,
-    fonts,
+    fonts: fontData,
   });
 
   const blob = await svgToImage(svg, width);

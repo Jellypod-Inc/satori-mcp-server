@@ -13,8 +13,8 @@ type QuoteParams = z.infer<typeof quoteSchema>;
 export const quoteTemplate: Template<typeof quoteSchema> = {
   name: "quote",
   description: "Inspirational quote image",
-  defaultSize: { width: 1080, height: 1080 },
-  googleFonts: [
+  size: { width: 1080, height: 1080 },
+  fonts: [
     { name: "Playfair Display", weight: 700, style: "italic" },
     { name: "Open Sans", weight: 400, style: "normal" }
   ],

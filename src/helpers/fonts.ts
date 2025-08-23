@@ -1,14 +1,16 @@
-// Match Satori's Weight type
-type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+import { FontWeight } from "satori/wasm";
 
-export interface FontConfig {
+export type Font = {
   name: string;
-  data: Buffer;  // Satori accepts Buffer in Node.js
-  weight: Weight;
+  weight: FontWeight;
   style: "normal" | "italic";
+};
+
+export type FontData = Font & {
+  data: Buffer;
 }
 
-export async function loadGoogleFont(name: string, weight: number = 400, style: string = "normal"): Promise<Buffer> {
+export async function loadGoogleFont(name: string, weight: FontWeight = 400, style: "normal" | "italic" = "normal"): Promise<FontData> {
   const fontUrl = `https://fonts.googleapis.com/css2?family=${name.replace(/ /g, "+")}:ital,wght@${style === "italic" ? 1 : 0},${weight}&display=swap`;
 
   const cssResponse = await fetch(fontUrl);
@@ -21,5 +23,19 @@ export async function loadGoogleFont(name: string, weight: number = 400, style: 
 
   const fontResponse = await fetch(fontUrlMatch[1]);
   const arrayBuffer = await fontResponse.arrayBuffer();
-  return Buffer.from(arrayBuffer);
+  return {
+    name,
+    weight,
+    style,
+    data: Buffer.from(arrayBuffer),
+  };
+}
+
+export async function loadFonts(fonts: Font[]): Promise<FontData[]> {
+  const fontData: FontData[] = [];
+  for (const font of fonts) {
+    const data = await loadGoogleFont(font.name, font.weight, font.style);
+    fontData.push(data);
+  }
+  return fontData;
 }
