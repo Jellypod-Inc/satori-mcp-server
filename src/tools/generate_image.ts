@@ -14,12 +14,12 @@ export const schema = {
     .array(
       z.object({
         name: z.string().default("Inter").describe("Name of the Google Font to load"),
-        weight: z.enum(["100", "200", "300", "400", "500", "600", "700", "800", "900"]).transform(Number).default("400").describe("Weight of the font"),
+        weight: z.number().min(100).max(900).default(400).describe("Weight of the font (100-900)"),
         style: z.enum(["normal", "italic"]).default("normal"),
       })
     )
     .optional()
-    .default([{ name: "Inter", weight: "400", style: "normal" }])
+    .default([{ name: "Inter", weight: 400, style: "normal" }])
     .describe("Array of Fonts to load from Google Fonts"),
 };
 
