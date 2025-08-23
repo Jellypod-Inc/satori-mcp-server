@@ -3,8 +3,8 @@ import sharp from "sharp";
 
 export async function svgToImage(
   svg: string,
-  width: number
-): Promise<Buffer> {
+  width: number,
+): Promise<Blob> {
   const resvg = new Resvg(svg, {
     fitTo: {
       mode: "width",
@@ -14,7 +14,9 @@ export async function svgToImage(
 
   const rendered = resvg.render();
   const pngBuffer = rendered.asPng();
-  return sharp(pngBuffer)
+  const webpBuffer = await sharp(pngBuffer)
     .webp({ quality: 80 })
     .toBuffer();
+
+  return new Blob([webpBuffer as unknown as ArrayBuffer], { type: "image/webp" });
 }

@@ -12,10 +12,12 @@ coverage/
 *.png
 !src/fonts/**/*.ttf
 
-# Generated files  
+# Generated files
 src/fonts/font-data.ts
 
 # IDE
 .vscode/
 .idea/
 .DS_Store
+
+.env*

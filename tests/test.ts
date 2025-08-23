@@ -1,12 +1,7 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import { testConfig } from './test-config';
 import generateFromTemplate from '../src/tools/generate_from_template';
 
 async function runTemplateTests(template?: string): Promise<boolean> {
-  const outputDir = path.join(__dirname, 'output/templates');
-  await fs.mkdir(outputDir, { recursive: true });
-
   const templatesToTest = template
     ? { [template]: testConfig.templates[template] }
     : testConfig.templates;
@@ -23,19 +18,27 @@ async function runTemplateTests(template?: string): Promise<boolean> {
 
     const results = await Promise.all(
       testCases.map(async (testCase) => {
-        const outputPath = path.join(outputDir, `${templateName}-${testCase.name}.webp`);
 
         try {
-          await generateFromTemplate({
+          const result = await generateFromTemplate({
             template: templateName,
             params: testCase.params,
-            outputPath,
             width: undefined,
             height: undefined,
             googleFonts: undefined,
           });
 
-          console.log(`  ✓ ${templateName} (${testCase.name}): ${outputPath}`);
+          // Check that we got a blob response
+          if (!result || !result.content || !Array.isArray(result.content)) {
+            throw new Error('Invalid response structure');
+          }
+
+          const blobContent = result.content.find(c => c.type === 'text');
+          if (!blobContent) {
+            throw new Error('No blob content in response');
+          }
+
+          console.log(`  ✓ ${templateName} (${testCase.name}): ${blobContent.text}`);
           return { success: true, testCase: testCase.name };
         } catch (error) {
           console.error(`  ✗ ${templateName} (${testCase.name}):`, error instanceof Error ? error.message : error);

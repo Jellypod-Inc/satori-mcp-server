@@ -1,18 +1,15 @@
 import { z } from "zod";
 import { type ToolMetadata, type InferSchema } from "xmcp";
 import satori from "satori";
-import fs from "fs/promises";
 import { getTemplate, listTemplates } from "../templates";
 import { svgToImage } from "../helpers/svg-to-image";
+import { saveBlob } from "../helpers/save-blob";
 
 export const schema = {
   template: z.string().describe("Name of the template to use"),
   params: z.record(z.string(), z.any()).describe("Parameters for the template"),
-  outputPath: z.string().describe("Path where the image should be saved"),
   width: z.number().optional().describe("Width override (uses template default if not specified)"),
   height: z.number().optional().describe("Height override (uses template default if not specified)"),
-  format: z.enum(["png", "webp"]).default("webp").describe("Output image format"),
-  quality: z.number().min(1).max(100).default(80).describe("WebP quality (1-100)"),
   googleFonts: z
     .array(
       z.object({
@@ -52,7 +49,7 @@ async function loadGoogleFont(name: string, weight: number = 400, style: string 
 }
 
 export default async function generateFromTemplate(params: InferSchema<typeof schema>) {
-  const { template: templateName, params: templateParams, outputPath, width, height, format, quality, googleFonts } = params;
+  const { template: templateName, params: templateParams, width, height, googleFonts } = params;
 
   const template = getTemplate(templateName);
   if (!template) {
@@ -102,15 +99,16 @@ export default async function generateFromTemplate(params: InferSchema<typeof sc
     fonts: fontConfigs,
   });
 
-  const imageBuffer = await svgToImage(svg, imageWidth);
+  const blob = await svgToImage(svg, imageWidth);
 
-  await fs.writeFile(outputPath, imageBuffer);
+  const fileName = `${templateName}.webp`;
+  const url = await saveBlob(blob, fileName);
 
   return {
     content: [
       {
         type: "text",
-        text: `Image generated from template "${templateName}" and saved to: ${outputPath}`,
+        text: `Image generated from template "${templateName}" and saved to: ${url}`,
       },
     ],
   };

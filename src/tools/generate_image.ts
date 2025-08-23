@@ -1,10 +1,10 @@
 import { z } from "zod";
 import type { ToolMetadata, InferSchema } from "xmcp";
 import satori from "satori";
-import fs from "node:fs/promises";
 import { loadGoogleFont } from "../helpers/fonts";
 import { parseJsxString } from "../helpers/jsx-parser";
 import { svgToImage } from "../helpers/svg-to-image";
+import { saveBlob } from "../helpers/save-blob";
 
 export const schema = {
   jsx: z.string().describe("JSX content as a string (e.g., '<div>Hello</div>')"),
@@ -71,15 +71,16 @@ export default async function generateImage(params: InferSchema<typeof schema>) 
     fonts,
   });
 
-  const imageBuffer = await svgToImage(svg, width);
+  const blob = await svgToImage(svg, width);
 
-  await fs.writeFile(outputPath, imageBuffer);
+  const fileName = "image.webp";
+  const url = await saveBlob(blob, fileName);
 
   return {
     content: [
       {
         type: "text",
-        text: `Image generated successfully and saved to: ${outputPath}`,
+        text: `Image saved to: ${url}`,
       },
     ],
   };

@@ -64,6 +64,15 @@ pnpm build
 pnpm start
 ```
 
+### Environment Variables
+You willl need to configure Vercel Blob Storage to save the generated image files.
+Get this from your Vercel dashboard: https://vercel.com/docs/storage/vercel-blob
+
+```
+export const BLOB_READ_WRITE_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+```
+
+
 ## Available Tools
 
 ### 1. `generate_image`
@@ -215,6 +224,12 @@ Built with:
 - [Satori](https://github.com/vercel/satori) - Convert HTML/CSS to SVG
 - [@resvg/resvg-js](https://github.com/yisibl/resvg-js) - Convert SVG to PNG
 - Google Fonts API - Dynamic font loading
+
+### Large Image Handling
+
+Rather than responding with a base64 encoded image, the server saves the image to Vercel Blob storage and responds with a reference url to the object. Most MCP clients and responses have size limitations.
+
+The url is publically accessible, but obfuscated with a large random string appended to the file name.
 
 ## Contributing
 
