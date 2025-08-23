@@ -3,7 +3,7 @@ import { type ToolMetadata, type InferSchema } from "xmcp";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import fs from "fs/promises";
-import { loadGoogleFont, loadLocalFonts } from "./helpers/fonts";
+import { loadGoogleFont, loadLocalFonts, type FontConfig } from "./helpers/fonts";
 import { parseJsxString } from "./helpers/jsx-parser";
 
 export const schema = {
@@ -45,10 +45,18 @@ export default async function generateImage(params: InferSchema<typeof schema>) 
   if (googleFonts) {
     for (const font of googleFonts) {
       const data = await loadGoogleFont(font.name, font.weight, font.style);
+      
+      // Ensure weight is a valid Weight type (100-900 in increments of 100)
+      type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+      const standardWeights: Weight[] = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+      const weight = standardWeights.reduce((prev, curr) => 
+        Math.abs(curr - font.weight) < Math.abs(prev - font.weight) ? curr : prev
+      ) as Weight;
+      
       localFonts.push({
         name: font.name,
         data,
-        weight: font.weight,
+        weight,
         style: font.style,
       });
     }

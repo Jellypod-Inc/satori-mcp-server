@@ -15,7 +15,7 @@ async function scanFontsDirectory(dir, basePath = '') {
     
     if (entry.isDirectory()) {
       fonts.push(...await scanFontsDirectory(fullPath, relativePath));
-    } else if (/\.(ttf|otf|woff)$/i.test(entry.name)) {
+    } else if (/\.(ttf|otf|woff)$/i.test(entry.name)) {  // Note: WOFF2 not supported by Satori
       const safeName = relativePath.replace(/[^a-zA-Z0-9]/g, '_').replace(/^_+|_+$/g, '');
       
       // Read font metadata

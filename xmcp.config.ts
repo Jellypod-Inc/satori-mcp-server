@@ -15,9 +15,9 @@ const config: XmcpConfig = {
     config.module = config.module || { rules: [] };
     config.module.rules = config.module.rules || [];
     
-    // Add loader for font files
+    // Add loader for font files (Note: WOFF2 not supported by Satori)
     config.module.rules.push({
-      test: /\.(ttf|otf|woff|woff2)$/,
+      test: /\.(ttf|otf|woff)$/,
       type: 'asset/inline', // This will inline the font as base64
     });
     

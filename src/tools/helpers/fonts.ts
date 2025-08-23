@@ -1,13 +1,16 @@
 import { fontImports } from "../../fonts/font-data";
 
+// Match Satori's Weight type
+type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+
 export interface FontConfig {
   name: string;
-  data: ArrayBuffer;
-  weight: number;
+  data: Buffer;  // Satori accepts Buffer in Node.js
+  weight: Weight;
   style: "normal" | "italic";
 }
 
-export async function loadGoogleFont(name: string, weight: number = 400, style: string = "normal"): Promise<ArrayBuffer> {
+export async function loadGoogleFont(name: string, weight: number = 400, style: string = "normal"): Promise<Buffer> {
   const fontUrl = `https://fonts.googleapis.com/css2?family=${name.replace(/ /g, "+")}:ital,wght@${style === "italic" ? 1 : 0},${weight}&display=swap`;
 
   const cssResponse = await fetch(fontUrl);
@@ -19,7 +22,8 @@ export async function loadGoogleFont(name: string, weight: number = 400, style: 
   }
 
   const fontResponse = await fetch(fontUrlMatch[1]);
-  return fontResponse.arrayBuffer();
+  const arrayBuffer = await fontResponse.arrayBuffer();
+  return Buffer.from(arrayBuffer);
 }
 
 export async function loadLocalFonts(): Promise<FontConfig[]> {
@@ -27,9 +31,12 @@ export async function loadLocalFonts(): Promise<FontConfig[]> {
   
   // Process all imported fonts
   for (const fontImport of fontImports) {
-    // Convert base64 to ArrayBuffer
+    // Convert base64 string or data URL to Buffer
+    // Webpack gives us data URLs, but our script extracts just the base64 part
     const buffer = Buffer.from(fontImport.data, "base64");
-    const data = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+    
+    // Satori can work directly with Buffer in Node.js, no need to convert to ArrayBuffer
+    const data = buffer;
     
     // Determine style from font metadata
     const style: "normal" | "italic" = fontImport.hasItalic ? "italic" : "normal";
@@ -39,7 +46,7 @@ export async function loadLocalFonts(): Promise<FontConfig[]> {
       const weightRange = fontImport.weights as { min: number; max: number; default: number };
       
       // Generate standard weight values within the font's range
-      const standardWeights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+      const standardWeights: Weight[] = [100, 200, 300, 400, 500, 600, 700, 800, 900];
       const availableWeights = standardWeights.filter(w => w >= weightRange.min && w <= weightRange.max);
       
       for (const weight of availableWeights) {
@@ -51,8 +58,14 @@ export async function loadLocalFonts(): Promise<FontConfig[]> {
         });
       }
     } else {
-      // Static font - single weight
-      const weight = fontImport.weights as number;
+      // Static font - single weight, ensure it's a valid Weight value
+      const rawWeight = fontImport.weights as number;
+      // Round to nearest standard weight
+      const standardWeights: Weight[] = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+      const weight = standardWeights.reduce((prev, curr) => 
+        Math.abs(curr - rawWeight) < Math.abs(prev - rawWeight) ? curr : prev
+      );
+      
       fonts.push({
         name: fontImport.family,
         data,
