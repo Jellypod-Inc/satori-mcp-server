@@ -23,9 +23,6 @@ async function runTemplateTests(template?: string): Promise<boolean> {
           const result = await generateFromTemplate({
             template: templateName,
             params: testCase.params,
-            width: undefined,
-            height: undefined,
-            googleFonts: undefined,
           });
 
           // Check that we got a blob response

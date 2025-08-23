@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { type ToolMetadata, type InferSchema } from "xmcp";
 import satori from "satori";
-import { getTemplate, listTemplates } from "../templates";
+import { getTemplate, templates } from "../templates";
 import { svgToImage } from "../helpers/svg-to-image";
 import { saveBlob } from "../helpers/save-blob";
 import { loadFonts } from "../helpers/fonts";
@@ -33,12 +33,12 @@ export default async function generateImageFromTemplate(params: InferSchema<type
 
   const template = getTemplate(templateName);
   if (!template) {
-    const availableTemplates = listTemplates().map(t => t.name).join(", ");
+    const availableTemplates = Object.keys(templates);
     return {
       content: [
         {
           type: "text",
-          text: `Template "${templateName}" not found. Available templates: ${availableTemplates}`,
+          text: `Template "${templateName}" not found. Available templates: ${availableTemplates.join(", ")}`,
         },
       ],
       isError: true,

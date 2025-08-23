@@ -25,9 +25,10 @@ export function getTemplate(name: string): Template | undefined {
   return templates[name];
 }
 
-export function listTemplates(): Array<{ name: string; description: string }> {
+export function listTemplates(): Array<{ name: string; description: string; size: { width: number; height: number } }> {
   return Object.entries(templates).map(([name, template]) => ({
     name,
     description: template.description,
+    size: template.size,
   }));
 }
