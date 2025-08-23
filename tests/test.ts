@@ -1,5 +1,5 @@
 import { testConfig } from './test-config';
-import generateFromTemplate from '../src/tools/generate_from_template';
+import generateFromTemplate from '../src/tools/generate_image_from_template';
 
 async function runTemplateTests(template?: string): Promise<boolean> {
   const templatesToTest = template

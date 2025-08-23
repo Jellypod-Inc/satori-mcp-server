@@ -23,7 +23,7 @@ export const schema = {
 };
 
 export const metadata: ToolMetadata = {
-  name: "generate_from_template",
+  name: "generate_image_from_template",
   description: "Generate an image using a predefined template",
   annotations: {
     title: "Generate Image from Template",
@@ -48,7 +48,7 @@ async function loadGoogleFont(name: string, weight: number = 400, style: string 
   return fontResponse.arrayBuffer();
 }
 
-export default async function generateFromTemplate(params: InferSchema<typeof schema>) {
+export default async function generateImageFromTemplate(params: InferSchema<typeof schema>) {
   const { template: templateName, params: templateParams, width, height, googleFonts } = params;
 
   const template = getTemplate(templateName);
