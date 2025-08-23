@@ -1,4 +1,4 @@
-import { FontWeight } from "satori/wasm";
+import { FontWeight } from "satori";
 
 export type Font = {
   name: string;

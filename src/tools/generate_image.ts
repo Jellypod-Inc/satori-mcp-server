@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { ToolMetadata, InferSchema } from "xmcp";
-import satori, { Font, FontWeight } from "satori";
+import satori, { FontWeight } from "satori";
 import { loadFonts } from "../helpers/fonts";
 import { parseJsxString } from "../helpers/jsx-parser";
 import { svgToImage } from "../helpers/svg-to-image";
@@ -10,7 +10,6 @@ export const schema = {
   jsx: z.string().describe("JSX content as a string (e.g., '<div>Hello</div>')"),
   width: z.number().default(600).describe("Width of the output image in pixels"),
   height: z.number().default(400).describe("Height of the output image in pixels"),
-  outputPath: z.string().describe("Path where the image should be saved"),
   fonts: z
     .array(
       z.object({
@@ -55,8 +54,7 @@ export default async function generateImage(params: InferSchema<typeof schema>) 
 
   const blob = await svgToImage(svg, width);
 
-  const fileName = "image.webp";
-  const url = await saveBlob(blob, fileName);
+  const url = await saveBlob(blob, "image.webp");
 
   return {
     content: [

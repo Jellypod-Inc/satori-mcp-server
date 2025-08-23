@@ -4,7 +4,7 @@ import satori from "satori";
 import { getTemplate, listTemplates } from "../templates";
 import { svgToImage } from "../helpers/svg-to-image";
 import { saveBlob } from "../helpers/save-blob";
-import { loadGoogleFont, FontData, loadFonts } from "../helpers/fonts";
+import { loadFonts } from "../helpers/fonts";
 
 export const schema = {
   template: z.string().describe("Name of the template to use"),
@@ -76,8 +76,7 @@ export default async function generateImageFromTemplate(params: InferSchema<type
   const blob = await svgToImage(svg, imageWidth);
 
   // Save image to Vercel Blob Storage
-  const fileName = `${templateName}.webp`;
-  const url = await saveBlob(blob, fileName);
+  const url = await saveBlob(blob, `${templateName}.webp`);
 
   return {
     content: [
