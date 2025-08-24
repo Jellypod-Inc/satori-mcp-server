@@ -10,15 +10,15 @@
     "dev": "xmcp dev",
     "start": "node dist/http.js",
     "test": "tsx tests/test.ts",
-    "test:social-card": "tsx tests/test.ts social-card",
-    "test:blog-header": "tsx tests/test.ts blog-header",
-    "test:quote": "tsx tests/test.ts quote"
+    "test:generate-image": "tsx tests/test-generate-image.ts",
+    "test:generate-image-from-template": "tsx tests/test-generate-image-from-template.ts"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "@types/react": "^19.1.11",
     "@vercel/blob": "^1.1.1",
     "dotenv": "^17.2.1",
+    "htm": "^3.1.1",
     "html-react-parser": "^5.2.6",
     "react": "^19.1.1",
     "satori": "^0.16.2",

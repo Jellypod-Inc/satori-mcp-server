@@ -59,14 +59,14 @@ export default async function generateImageFromTemplate(params: InferSchema<type
     };
   }
 
-  const jsxElement = template.generate(validationResult.data);
+  const html = template.generate(validationResult.data);
 
   const fontData = await loadFonts(template.fonts);
 
   // Generate SVG image
   const imageWidth = template.size.width;
   const imageHeight = template.size.height;
-  const svg = await satori(jsxElement, {
+  const svg = await satori(html, {
     width: imageWidth,
     height: imageHeight,
     fonts: fontData,

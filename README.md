@@ -52,10 +52,9 @@ pnpm dev
 # Run tests
 pnpm test
 
-# Run specific template tests
-pnpm test:social-card
-pnpm test:blog-header
-pnpm test:quote
+# Run specific tests
+pnpm test:generate-image
+pnpm test:generate-image-from-template
 
 # Build for production
 pnpm build

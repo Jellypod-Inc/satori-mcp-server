@@ -1,13 +1,13 @@
 import { z } from "zod";
 import type { ToolMetadata, InferSchema } from "xmcp";
 import satori, { FontWeight } from "satori";
+import parse from "html-react-parser";
 import { loadFonts } from "../helpers/fonts";
-import { parseJsxString } from "../helpers/jsx-parser";
 import { svgToImage } from "../helpers/svg-to-image";
 import { saveBlob } from "../helpers/save-blob";
 
 export const schema = {
-  jsx: z.string().describe("JSX content as a string (e.g., '<div>Hello</div>')"),
+  html: z.string().describe("HTML string with inline styles (e.g., '<div style=\"color: red\">Hello</div>')"),
   width: z.number().default(600).describe("Width of the output image in pixels"),
   height: z.number().default(400).describe("Height of the output image in pixels"),
   fonts: z
@@ -36,7 +36,7 @@ export const metadata: ToolMetadata = {
 
 
 export default async function generateImage(params: InferSchema<typeof schema>) {
-  const { jsx, width, height, fonts } = params;
+  const { html, width, height, fonts } = params;
 
   const fontData = await loadFonts(fonts.map(f => ({
     name: f.name,
@@ -44,9 +44,8 @@ export default async function generateImage(params: InferSchema<typeof schema>) 
     style: f.style,
   })));
 
-  const jsxElement = parseJsxString(jsx);
-
-  const svg = await satori(jsxElement, {
+  const template = parse(html);
+  const svg = await satori(template, {
     width,
     height,
     fonts: fontData,
