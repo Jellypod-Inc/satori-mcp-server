@@ -15,7 +15,7 @@ export const blogHeaderTemplate: Template<typeof blogHeaderSchema> = {
   name: "blog-header",
   description: "Blog post header image",
   size: { width: 1920, height: 1080 },
-  fonts: [  
+  fonts: [
     { name: "Roboto", weight: 900, style: "normal" },
     { name: "Roboto", weight: 400, style: "normal" }
   ],
@@ -43,7 +43,6 @@ export const blogHeaderTemplate: Template<typeof blogHeaderSchema> = {
             marginBottom: "40px",
             textAlign: "center",
             lineHeight: 1.1,
-            textShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
           }}
         >
           {params.title}

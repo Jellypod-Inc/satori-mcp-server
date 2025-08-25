@@ -1,25 +1,25 @@
 import * as React from "react";
 import { z } from "zod";
-import type { Template } from "./index";
+import { Template } from "./index";
 
-const socialCardSchema = z.object({
+const socialCardGridSchema = z.object({
   title: z.string().describe("Main title text for the social card"),
   description: z.string().optional().describe("Optional description text"),
   background: z.string().optional().describe("CSS gradient background"),
 });
 
-type SocialCardParams = z.infer<typeof socialCardSchema>;
+export type SocialCardGridParams = z.infer<typeof socialCardGridSchema>;
 
-export const socialCardTemplate: Template<typeof socialCardSchema> = {
-  name: "social-card",
-  description: "Social media card with title and description",
+export const socialCardGridTemplate: Template<typeof socialCardGridSchema> = {
+  name: "social-card-grid",
+  description: "Social media card with grid background",
   size: { width: 1200, height: 630 },
   fonts: [
-    { name: "Inter", weight: 700, style: "normal" },
-    { name: "Inter", weight: 400, style: "normal" }
+    { name: "Playfair Display", weight: 700, style: "normal" },
+    { name: "Playfair Display", weight: 400, style: "normal" }
   ],
-  schema: socialCardSchema,
-  generate: (params: SocialCardParams) => {
+  schema: socialCardGridSchema,
+  generate: (params: SocialCardGridParams) => {
     return (
       <div
         style={{
@@ -30,18 +30,24 @@ export const socialCardTemplate: Template<typeof socialCardSchema> = {
           width: "100%",
           height: "100%",
           background: params.background || "#1a1a1a",
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
           color: "#ffffff",
-          fontFamily: "Inter",
-          padding: "60px",
+          fontFamily: "Playfair Display",
+          padding: "80px",
+          position: "relative",
         }}
       >
         <h1
           style={{
             fontSize: "92px",
             fontWeight: 700,
-            marginBottom: "0px",
             textAlign: "center",
             lineHeight: 1.2,
+            marginBottom: "0px",
           }}
         >
           {params.title}
