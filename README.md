@@ -1,6 +1,14 @@
+![Cover](.github/card.png)
+
 # Satori MCP Server
 
 An MCP (Model Context Protocol) server that generates beautiful images from React components using [Satori](https://github.com/vercel/satori). Create social cards, blog headers, quotes, and custom images directly through AI assistants like Claude.
+
+<div>
+<a href="https://jellypod.ai"><img alt="jellypod logo" src="https://img.shields.io/badge/MADE%20BY%20jellypod.ai-000000.svg?style=for-the-badge&labelColor=000"></a>
+<a href="https://github.com/Jellypod-Inc/satori-mcp-server/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/LICENSE-MPL--2.0-blue?style=for-the-badge&labelColor=000000"></a>
+
+</div>
 
 ## Features
 
@@ -8,7 +16,7 @@ An MCP (Model Context Protocol) server that generates beautiful images from Reac
 - 📝 **Built-in templates** - Social cards, blog headers, and quote designs
 - 🔤 **Google Fonts support** - Access to hundreds of fonts
 - 🚀 **MCP Protocol** - Works seamlessly with Claude Desktop and other MCP clients
-- 🛠️ **TypeScript** - Fully typed for better developer experience
+- 🛠️ **TypeScript** - Fully typed!
 
 ## Installation
 
@@ -27,17 +35,14 @@ pnpm install
 
 ### Configure with Claude Desktop
 
-Add the server to your Claude Desktop configuration:
-
-**MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+To use the hosted version of the MCP server, add the server to your Claude Desktop configuration:
 
 ```json
 {
   "mcpServers": {
     "satori": {
-      "command": "node",
-      "args": ["/path/to/satori-mcp-server/dist/http.js"]
+      "type": "http",
+      "url": "https://satori.jellypod.ai/mcp"
     }
   }
 }

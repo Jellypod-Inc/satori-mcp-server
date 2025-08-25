@@ -1,9 +1,3 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Project Overview
-
 This is a Satori MCP (Model Context Protocol) server that generates images from React components. Built with the xmcp TypeScript framework for creating AI tools with Model Context Protocol support.
 
 ## Development Commands
@@ -20,8 +14,6 @@ pnpm build
 
 # Start production HTTP server
 pnpm start
-# or
-node dist/http.js
 ```
 
 ## Architecture
