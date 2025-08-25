@@ -5,7 +5,7 @@ import { Template } from "./index";
 const quoteSchema = z.object({
   quote: z.string().describe("The quote text"),
   author: z.string().optional().describe("Quote author"),
-  backgroundColor: z.string().default("#f7f3f0").describe("Background color (CSS color value)"),
+  background: z.string().optional().describe("CSS gradient background"),
 });
 
 type QuoteParams = z.infer<typeof quoteSchema>;
@@ -29,7 +29,7 @@ export const quoteTemplate: Template<typeof quoteSchema> = {
           alignItems: "center",
           width: "100%",
           height: "100%",
-          backgroundColor: params.backgroundColor || "#f7f3f0",
+          background: params.background || "#f7f3f0",
           color: "#2d2d2d",
           padding: "80px",
         }}
