@@ -3,7 +3,6 @@ import { z } from "zod";
 import { Font } from "../helpers/fonts";
 import { socialCardTemplate } from "./social-card";
 import { blogHeaderTemplate } from "./blog-header";
-import { socialCardGridTemplate } from "./social-card-grid";
 import { quoteTemplate } from "./quote";
 import { geometricTemplate } from "./geometric";
 
@@ -19,7 +18,6 @@ export interface Template<T extends z.ZodType = z.ZodType> {
 export const templates: Record<string, Template<any>> = {
   "social-card": socialCardTemplate,
   "blog-header": blogHeaderTemplate,
-  "social-card-grid": socialCardGridTemplate,
   "quote": quoteTemplate,
   "geometric": geometricTemplate,
 };
