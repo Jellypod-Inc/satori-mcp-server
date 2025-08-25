@@ -5,6 +5,7 @@ import { socialCardTemplate } from "./social-card";
 import { blogHeaderTemplate } from "./blog-header";
 import { quoteTemplate } from "./quote";
 import { geometricTemplate } from "./geometric";
+import { subtleGradientTemplate } from "./subtle-gradient";
 
 export interface Template<T extends z.ZodType = z.ZodType> {
   name: string;
@@ -20,6 +21,7 @@ export const templates: Record<string, Template<any>> = {
   "blog-header": blogHeaderTemplate,
   "quote": quoteTemplate,
   "geometric": geometricTemplate,
+  "subtle-gradient": subtleGradientTemplate,
 };
 
 export function getTemplate(name: string): Template | undefined {
