@@ -63,6 +63,18 @@ pnpm build
 pnpm start
 ```
 
+### Testing
+To test the MCP server, use the Model Context Protocol (MCP) inspector: https://modelcontextprotocol.io/legacy/tools/inspector
+
+You can run it via:
+
+```
+pnpm dlx @modelcontextprotocol/inspector
+```
+
+and then run the local MCP server, and connect to the localhost in the inspector.
+
+
 ### Environment Variables
 You willl need to configure Vercel Blob Storage to save the generated image files.
 Get this from your Vercel dashboard: https://vercel.com/docs/storage/vercel-blob

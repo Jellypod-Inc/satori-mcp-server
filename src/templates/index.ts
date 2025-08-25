@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { z } from "zod";
 import { Font } from "../helpers/fonts";
 
@@ -22,7 +22,7 @@ export const templates: Record<string, Template<any>> = {
 };
 
 export function getTemplate(name: string): Template | undefined {
-  return templates[name];
+  return templates[name.trim()];
 }
 
 export function listTemplates(): Array<{ name: string; description: string; size: { width: number; height: number } }> {

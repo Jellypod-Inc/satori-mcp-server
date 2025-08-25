@@ -1,5 +1,4 @@
 import { Resvg } from "@resvg/resvg-js";
-import sharp from "sharp";
 
 export async function svgToImage(
   svg: string,
@@ -14,9 +13,6 @@ export async function svgToImage(
 
   const rendered = resvg.render();
   const pngBuffer = rendered.asPng();
-  const webpBuffer = await sharp(pngBuffer)
-    .webp({ quality: 80 })
-    .toBuffer();
 
-  return new Blob([webpBuffer as unknown as ArrayBuffer], { type: "image/webp" });
+  return new Blob([pngBuffer as unknown as ArrayBuffer], { type: "image/png" });
 }

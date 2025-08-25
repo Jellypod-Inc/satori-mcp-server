@@ -24,6 +24,7 @@ export const metadata: ToolMetadata = {
 export default function listTemplatesCommand() {
   const templates = listTemplates();
 
+  console.log('Listing templates', templates);
   return {
     content: [
       {

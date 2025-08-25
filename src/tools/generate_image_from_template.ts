@@ -5,6 +5,7 @@ import { getTemplate, templates } from "../templates";
 import { svgToImage } from "../helpers/svg-to-image";
 import { saveBlob } from "../helpers/save-blob";
 import { loadFonts } from "../helpers/fonts";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 export const schema = {
   template: z.string().describe("Name of the template to use"),
@@ -31,6 +32,8 @@ export const metadata: ToolMetadata = {
 export default async function generateImageFromTemplate(params: InferSchema<typeof schema>) {
   const { template: templateName, params: templateParams } = params;
 
+  console.log('Generating image from template', templateName);
+
   const template = getTemplate(templateName);
   if (!template) {
     const availableTemplates = Object.keys(templates);
@@ -48,11 +51,19 @@ export default async function generateImageFromTemplate(params: InferSchema<type
   // Validate params with the template's Zod schema
   const validationResult = template.schema.safeParse(templateParams);
   if (!validationResult.success) {
+    const validSchema = zodToJsonSchema(template.schema);
+    const errorMessage = validationResult.error.issues
+      .map(issue => `${issue.path.join(".")}: ${issue.message}`)
+      .join(", ");
+
     return {
       content: [
         {
           type: "text",
-          text: `Invalid parameters for template "${templateName}": ${validationResult.error.format()._errors.join(", ")}`,
+          text: `Invalid parameters. Errors: ${errorMessage}
+
+Valid parameters schema:
+${JSON.stringify(validSchema, null, 2)}`,
         },
       ],
       isError: true,
@@ -76,7 +87,7 @@ export default async function generateImageFromTemplate(params: InferSchema<type
   const blob = await svgToImage(svg, imageWidth);
 
   // Save image to Vercel Blob Storage
-  const url = await saveBlob(blob, `${templateName}.webp`);
+  const url = await saveBlob(blob, `${templateName}.png`);
 
   return {
     content: [

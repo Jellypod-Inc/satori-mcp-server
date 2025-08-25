@@ -39,13 +39,13 @@ export default async function getTemplate(params: InferSchema<typeof schema>) {
     };
   }
 
+  console.log('Getting template details for', template.name);
   const jsonSchema = zodToJsonSchema(template.schema);
 
   const templateDetails = {
     name: template.name,
     description: template.description,
     size: template.size,
-    fonts: template.fonts,
     parameters: jsonSchema,
   };
 

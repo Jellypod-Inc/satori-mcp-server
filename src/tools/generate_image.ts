@@ -25,9 +25,9 @@ export const schema = {
 
 export const metadata: ToolMetadata = {
   name: "generate_image",
-  description: "Generate an image from JSX using Satori",
+  description: "Generate an image from HTML using Satori",
   annotations: {
-    title: "Generate Image from JSX",
+    title: "Generate Image from HTML",
     readOnlyHint: false,
     destructiveHint: false,
     idempotentHint: false,
@@ -37,6 +37,7 @@ export const metadata: ToolMetadata = {
 
 export default async function generateImage(params: InferSchema<typeof schema>) {
   const { html, width, height, fonts } = params;
+  console.log('Generating image from HTML');
 
   const fontData = await loadFonts(fonts.map(f => ({
     name: f.name,
@@ -53,7 +54,7 @@ export default async function generateImage(params: InferSchema<typeof schema>) 
 
   const blob = await svgToImage(svg, width);
 
-  const url = await saveBlob(blob, "image.webp");
+  const url = await saveBlob(blob, "image.png");
 
   return {
     content: [
