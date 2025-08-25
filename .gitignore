@@ -9,7 +9,6 @@ xmcp-env.d.ts
 tests/output/
 test-output/
 coverage/
-*.png
 !src/fonts/**/*.ttf
 
 # Generated files
