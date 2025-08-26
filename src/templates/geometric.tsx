@@ -61,19 +61,16 @@ export const geometricTemplate: Template<typeof geometricSchema> = {
           alignItems: "flex-start",
         }}
       >
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "20px" }}>
-          <h1
-            style={{
-              fontSize: "72px",
-              fontWeight: 700,
-              margin: 0,
-              letterSpacing: "-2px",
-            }}
-          >
-            {params.title}
-          </h1>
-        </div>
-
+        <h1
+          style={{
+            fontSize: "72px",
+            fontWeight: 700,
+            margin: 0,
+            letterSpacing: "-2px",
+          }}
+        >
+          {params.title}
+        </h1>
         <p
           style={{
             fontSize: "18px",
