@@ -13,7 +13,7 @@ export type SubtleGradientParams = z.infer<typeof subtleGradientSchema>;
 export const subtleGradientTemplate: Template<typeof subtleGradientSchema> = {
   name: "subtle-gradient",
   description: "Clean white design with subtle gradient accent at bottom",
-  size: { width: 1200, height: 630 },
+  size: { width: 1600, height: 900 },
   fonts: [
     { name: "Inter", weight: 700, style: "normal" },
     { name: "Inter", weight: 400, style: "normal" }

@@ -14,7 +14,7 @@ export type BlogHeaderTemplateParams = z.infer<typeof blogHeaderSchema>;
 export const blogHeaderTemplate: Template<typeof blogHeaderSchema> = {
   name: "blog-header",
   description: "Blog post header image",
-  size: { width: 1920, height: 1080 },
+  size: { width: 1600, height: 900 },
   fonts: [
     { name: "Roboto", weight: 900, style: "normal" },
     { name: "Roboto", weight: 400, style: "normal" }

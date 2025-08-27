@@ -7,7 +7,7 @@ const startupSchema = z.object({
   subtitle: z.string().optional().describe("Optional subtitle text"),
   description: z.string().optional().describe("Optional description text"),
   logo: z.string().optional().describe("Optional logo image URL"),
-  color: z.string().describe("The primary accent color").optional().default("#1475b2"),
+  color: z.string().describe("The primary accent color in hex format (like #1475b2)").optional().default("#1475b2"),
   light: z.boolean().optional().default(false)
 });
 
@@ -16,7 +16,7 @@ export type StartupParams = z.infer<typeof startupSchema>;
 export const startupTemplate: Template<typeof startupSchema> = {
   name: "startup",
   description: "Startup background",
-  size: { width: 1200, height: 630 },
+  size: { width: 1600, height: 900 },
   fonts: [
     { name: "Inter", weight: 700, style: "normal" },
     { name: "Inter", weight: 600, style: "normal" },

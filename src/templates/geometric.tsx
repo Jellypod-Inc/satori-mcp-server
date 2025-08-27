@@ -13,7 +13,7 @@ export type GeometricParams = z.infer<typeof geometricSchema>;
 export const geometricTemplate: Template<typeof geometricSchema> = {
   name: "geometric",
   description: "Geometric background",
-  size: { width: 1200, height: 630 },
+  size: { width: 1600, height: 900 },
   fonts: [
     { name: "Inter", weight: 700, style: "normal" },
     { name: "Inter", weight: 500, style: "normal" }

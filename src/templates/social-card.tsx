@@ -13,7 +13,7 @@ type SocialCardParams = z.infer<typeof socialCardSchema>;
 export const socialCardTemplate: Template<typeof socialCardSchema> = {
   name: "social-card",
   description: "Social media card with title and description",
-  size: { width: 1200, height: 630 },
+  size: { width: 1600, height: 900 },
   fonts: [
     { name: "Inter", weight: 700, style: "normal" },
     { name: "Inter", weight: 400, style: "normal" }
