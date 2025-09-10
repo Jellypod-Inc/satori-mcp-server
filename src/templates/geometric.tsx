@@ -40,8 +40,8 @@ export const geometricTemplate: Template<typeof geometricSchema> = {
           width: "100%",
           height: "100%",
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.05) 2px, transparent 2px),
-            linear-gradient(90deg, rgba(255,255,255,0.05) 2px, transparent 2px)
+            linear-gradient(rgba(255,255,255,0.05) 4px, transparent 4px),
+            linear-gradient(90deg, rgba(255,255,255,0.05) 4px, transparent 4px)
           `,
           backgroundSize: "40px 40px",
           color: "#ffffff",
