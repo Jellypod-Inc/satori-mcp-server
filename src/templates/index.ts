@@ -9,6 +9,7 @@ import { subtleGradientTemplate } from "./subtle-gradient";
 import { startupTemplate } from "./startup";
 import { portraitTemplate } from "./portrait";
 import { podcastCardTemplate } from "./podcast-card";
+import { sidePanelTemplate } from "./side-panel";
 
 export interface Template<T extends z.ZodType = z.ZodType> {
   name: string;
@@ -28,6 +29,7 @@ export const templates: Record<string, Template<any>> = {
   "startup": startupTemplate,
   "portrait": portraitTemplate,
   "podcast-card": podcastCardTemplate,
+  "side-panel": sidePanelTemplate,
 };
 
 export function getTemplate(name: string): Template | undefined {
